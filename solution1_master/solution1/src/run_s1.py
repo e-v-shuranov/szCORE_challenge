@@ -53,7 +53,9 @@ def process_dataset(
 
 
 if __name__ == '__main__':
-    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena"
-    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_result"
+    # input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena"
+    # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_result"
+    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT"
+    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT_result"
 
     process_dataset(input, result)
