@@ -1,0 +1,30 @@
+[project]
+name = "solution1"
+version = "0.1.0"
+description = "SzCORE competition. Fusion of pretrain, wavelet and ICA based solutions"
+authors = [
+    { name = "Evgenii Shuranov", email = "evgeniy.v.shuranov@gmail.com"},
+    { name = "Rafael Grigorian"},
+    { name = "Konstantin Chukaev" }
+]
+dependencies = [
+    "numpy>=1.25",
+    "scipy>=1.14.1",
+    "epilepsy2bids>=0.0.6",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/solution1"]
