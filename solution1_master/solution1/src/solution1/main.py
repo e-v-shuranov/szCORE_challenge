@@ -4,7 +4,7 @@ from epilepsy2bids.eeg import Eeg
 
 from solution1.solution1_alg import gotman_algorithm    
 
-def main(edf_file, outFile):
+def main(edf_file, outFile, XGB_mod=None):
     
     eeg = Eeg.loadEdfAutoDetectMontage(edfFile=edf_file)
     if eeg.montage is Eeg.Montage.UNIPOLAR:

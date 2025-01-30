@@ -2,9 +2,10 @@
 # from epilepsy2bids.annotations import Annotations
 # from epilepsy2bids.eeg import Eeg
 
-from solution1.main import main
+from solution1.main_wave import main
 from pathlib import Path
 import os
+import pickle
 # from epilepsy2bids.annotations import Annotations
 # from timescoring.annotations import Annotation
 # import numpy as np
@@ -14,7 +15,7 @@ import os
 
 
 def process_dataset(
-    input: Path, result: Path
+    input: Path, result: Path, is_wave_model=False
 ) -> bool:
     """
     run siezors detection from main for dataset input
@@ -26,7 +27,11 @@ def process_dataset(
     edf_count = 0
     tsv_count = 0
     result_count = 0
-
+    if is_wave_model:
+        XGB_mod = pickle.load(open('xgb_model_wav4.pkl', 'rb'))
+    else:
+        XGB_mod = None
+        
     for subject in Path(input).glob("sub-*"):
         for ref_tsv in subject.glob("**/*.tsv"):  # use tsv for loop to be sure that we will have
             print(ref_tsv)
@@ -37,7 +42,7 @@ def process_dataset(
 
             edf_path = ref_tsv
             edf_path = str(edf_path)[:-10]+'eeg.edf'   #  replace "events.tsv" to "eeg.edf"
-            main(str(edf_path), res_tsv_name)
+            main(str(edf_path), res_tsv_name, XGB_mod=XGB_mod)
 
             if os.path.exists(ref_tsv):
                 tsv_count += 1
@@ -53,9 +58,16 @@ def process_dataset(
 
 
 if __name__ == '__main__':
-    # input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena"
-    # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_result"
-    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT"
-    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT_result"
+    # input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_test"
+    # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_result_wave"
+    # input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT"
+    # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT_result"
+    # input = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess"
+    # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess_result_baseline"
 
-    process_dataset(input, result)
+
+    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT"
+    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT_result_wave"
+
+
+    process_dataset(input, result, is_wave_model=True)
