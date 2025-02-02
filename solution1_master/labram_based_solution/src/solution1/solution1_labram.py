@@ -1,14 +1,17 @@
 import numpy as np
 import pywt
 from PyQt5.QtCore import qQNaN
+import solution1.utils as utils
+import torch
+from einops import rearrange
 
-
-def wave_algorithm(
+@torch.no_grad()
+def labram_algorithm(
     # t, eeg_data, fs, signals, XGB_model, window_size=2, overlap=0.5, background_size=16, transition_size=12, wavelet_level_4 = True
-    fs, signals, XGB_model, wavelet_level_4 = True
+    model, device, fs, signals, ch_names=None
 ):
     """
-    wavelet based algorithm for seizure detection
+    labram based algorithm for seizure detection
     Args:
     t: array of time points
     eeg_data: EEG data, shape (n_samples, n_channels)
@@ -18,38 +21,38 @@ def wave_algorithm(
     Returns:
     seizure_detections: boolean array of seizure detections, shape (n_samples,)
     """
-    # window_size = int(window_size * fs)
-    # step = int(window_size * (1 - overlap))
-    # background_size = int(background_size * fs)
-    # transition_size = int(transition_size * fs)
-    # channel_detection = np.zeros(eeg_data.shape)
-    # idx_detection = [[] for _ in range(eeg_data.shape[0])]
 
-    # for i in np.arange(0, signals.shape[1]):
+    input_chans = None
+    if ch_names is not None:
+        input_chans = utils.get_input_chans(ch_names)
+
     num_of_sec = int(signals.shape[1]/fs)
     numChan = signals.shape[0]
     features = np.zeros([num_of_sec, numChan, (fs) * 5])
     offset = signals.shape[1]
     if signals[:,-2*(fs):].shape[1]<400 or signals[:,0:2*(fs)].shape[1]<400:
-        signals_add = np.concatenate((np.zeros([18, 400]),signals,np.zeros([18, 400])),axis=1) 
+        signals_add = np.concatenate((np.zeros([19, 400]),signals,np.zeros([19, 400])),axis=1)
     else:
         signals_add = np.concatenate((signals[:,0:2*(fs)],signals,signals[:,-2*(fs):]),axis=1)   # add 2 sec left and right
     to_pred = []
     for i in range(0, num_of_sec):  # number of indexes increase on  4
         features[i, :] = signals_add[:,(i)*fs:(i+5)*fs]               # get 5 sec interval signals[-2 : +3] or signals_add[0:5]
 
-        file = features[i]
-        if wavelet_level_4:
-            coefficients = pywt.wavedec(file, wavelet='haar', level=4)
-            X = coefficients[0][0:8]
-            to_pred.append(X.reshape(504))
-        else:
-            coefficients = pywt.dwt(file, 'haar')  # Perform discrete Haar wavelet transform
-            X = coefficients[0][0:8]
-            to_pred.append(X.reshape(4000))
+    EEG=torch.tensor(features)
+    EEG = EEG.float().to(device, non_blocking=True) / 100
+    EEG = rearrange(EEG, 'B N (A T) -> B N A T', T=200)
+    model.to(device)
+    # batch 350 maximum
+    batch_size = 2000
+    n_batches = EEG.shape[0]//batch_size
+    all_answer = np.zeros([num_of_sec, 6])
+    for i in range(n_batches+1):
+        answer = model(EEG[i*batch_size:(i+1)*batch_size,:], input_chans=input_chans)
+        all_answer[i*batch_size:(i+1)*batch_size,:] = answer.cpu().detach().numpy()
 
-    answer = XGB_model.predict_proba(to_pred)
+
+
     # output = torch.tensor(answer.argmax(1) < 3).float()
-    output = (answer.argmax(1) < 3)
+    output = (all_answer.argmax(1) < 3)
 
     return output

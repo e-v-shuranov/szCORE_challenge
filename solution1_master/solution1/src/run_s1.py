@@ -34,6 +34,11 @@ def process_dataset(
         
     for subject in Path(input).glob("sub-*"):
         for ref_tsv in subject.glob("**/*.tsv"):  # use tsv for loop to be sure that we will have
+            # test_edf="/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess/sub-592/ses-07/eeg/sub-592_ses-07_task-szMonitoring_run-07_eeg.edf"
+            # test_tsv = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess/sub-592/ses-07/eeg/sub-592_ses-07_task-szMonitoring_run-07_events.tsv"
+            # main(str(test_edf), test_tsv, XGB_mod=XGB_mod)
+            # exit(-555)
+
             print(ref_tsv)
             last_parts = list(ref_tsv.parts)[-4:]
             last_path = Path(*last_parts)
@@ -66,8 +71,8 @@ if __name__ == '__main__':
     # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess_result_baseline"
 
 
-    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT"
-    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_CHB-MIT_result_wave"
+    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess"
+    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess_result_wave"
 
 
     process_dataset(input, result, is_wave_model=True)

@@ -17,7 +17,7 @@ def main(edf_file, outFile, XGB_mod=None):
     sfreq = eeg.fs
 
     info = mne.create_info(channel_names, sfreq, ch_types="eeg")
-    Rawdata = RawArray(data=eeg_data, info=info)  # Данные должны быть транспонированы
+    Rawdata = RawArray(data=eeg_data, info=info)  
 
     Rawdata.notch_filter(50.0)
     Rawdata.resample(200, n_jobs=5)
