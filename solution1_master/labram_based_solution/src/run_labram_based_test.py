@@ -11,20 +11,16 @@ import torch
 from pathlib import Path
 import os
 import pickle
-# from epilepsy2bids.annotations import Annotations
-# from timescoring.annotations import Annotation
-# import numpy as np
-# from timescoring import scoring
 
-# from solution1.solution1_alg import gotman_algorithm    # for Docker!!!
+import solution1.sz_metrics_test as  sz_metrics_test # debug only
+from epilepsy2bids.annotations import Annotations    # debug only
+
 
 def labram_model_load():
     # model loading. steps::
     # 1) get model
     # 2) load_state_dict
     # 3) load best finetuned
-
-
 
     args, ds_init = run_class_finetuning_sz_chlng_2025.get_args()
     utils.init_distributed_mode(args)
@@ -119,9 +115,18 @@ def process_dataset(
 
     for subject in Path(input).glob("sub-*"):
         for ref_tsv in subject.glob("**/*.tsv"):  # use tsv for loop to be sure that we will have
-            # test_edf="/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess/sub-592/ses-07/eeg/sub-592_ses-07_task-szMonitoring_run-07_eeg.edf"
-            # test_tsv = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess/sub-592/ses-07/eeg/sub-592_ses-07_task-szMonitoring_run-07_events.tsv"
-            # main(str(test_edf), test_tsv, XGB_mod=XGB_mod)
+            # res_tsv_name = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_result_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_events.tsv"
+            # test_edf="/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_eeg.edf"
+            # ref_tsv = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_events.tsv"
+            # print(ref_tsv)
+            # os.makedirs(os.path.dirname(res_tsv_name), exist_ok=True)
+            # main(str(test_edf), res_tsv_name, model, device)
+            #
+            # ref = Annotations.loadTsv(ref_tsv)
+            # hyp = Annotations.loadTsv(res_tsv_name)
+            # fs = 1
+            # f1 = sz_metrics_test.f1_sz_estimation(torch.tensor(hyp.getMask(fs)),torch.tensor(ref.getMask(fs)))
+            # print(f1)
             # exit(-555)
 
             print(ref_tsv)

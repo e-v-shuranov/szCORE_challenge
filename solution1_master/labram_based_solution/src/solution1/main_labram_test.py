@@ -18,7 +18,7 @@ def main(edf_file, outFile, model, device):
         print("Model needs unipolar. Eeg Montage BIPOLAR: ", edf_file)  # cant convert to unipolar
         exit(0)
     eeg_data = eeg.data
-    channel_names = standard_1020_subset  # replace eeg.channels to remove  "-Avg"  here could be additional check that FP1-Avg => FP1 etc.. but not nessesary for chellenge conditions
+    channel_names = standard_1020_subset  #  replace eeg.channels to remove  "-Avg"  here could be additional check that FP1-Avg => FP1 etc.. but not nessesary for chellenge conditions
     sfreq = eeg.fs
     info = mne.create_info(channel_names, sfreq, ch_types="eeg")
     Rawdata = RawArray(data=eeg_data, info=info)
