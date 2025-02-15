@@ -613,9 +613,9 @@ def auto_load_model(args, model, model_without_ddp, optimizer, loss_scaler, mode
     if not getattr(args, 'enable_deepspeed', False):
         # torch.amp
         if args.auto_resume and len(args.resume) == 0:
-            all_checkpoints = glob.glob(os.path.join(output_dir, 'checkpoint.pth'))
+            all_checkpoints = glob.glob(os.path.join(output_dir, 'checkpoint-best.pth'))
             if len(all_checkpoints) > 0:
-                args.resume = os.path.join(output_dir, 'checkpoint.pth')
+                args.resume = os.path.join(output_dir, 'checkpoint-best.pth')
             else:
                 all_checkpoints = glob.glob(os.path.join(output_dir, 'checkpoint-*.pth'))
                 latest_ckpt = -1

@@ -79,7 +79,9 @@ def labram_model_load():
     #     optimizer=optimizer, loss_scaler=loss_scaler, model_ema=model_ema)
 
     # [end] model loading
-    device = torch.device(args.device)
+    # device = torch.device(args.device)
+
+    device = torch.device('cuda:1')
 
     return model, device
 
@@ -95,6 +97,7 @@ def labram_model_load_short():
         args=args, model=model, model_without_ddp=model,
         optimizer=None, loss_scaler=None, model_ema=None)
 
+    device = torch.device('cuda:1')
     return model
 
 def process_dataset(
@@ -115,12 +118,20 @@ def process_dataset(
 
     for subject in Path(input).glob("sub-*"):
         for ref_tsv in subject.glob("**/*.tsv"):  # use tsv for loop to be sure that we will have
-            # res_tsv_name = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_result_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_events.tsv"
-            # test_edf="/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_eeg.edf"
-            # ref_tsv = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_events.tsv"
+            # # res_tsv_name = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_result_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_events.tsv"
+            # # test_edf="/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_test/sub-00/ses-01/eeg/sub-00_ses-01_task-szMonitoring_run-00_eeg.edf"
+            # ref_tsv = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena/sub-14/ses-01/eeg/sub-14_ses-01_task-szMonitoring_run-02_events.tsv"
+            # res_tsv_name = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_v4/sub-14/ses-01/eeg/sub-14_ses-01_task-szMonitoring_run-02_events.tsv"
+            #
             # print(ref_tsv)
+            # # last_parts = list(ref_tsv.parts)[-4:]
+            # # last_path = Path(*last_parts)
+            # # res_tsv_name = os.path.join(result,last_path)
             # os.makedirs(os.path.dirname(res_tsv_name), exist_ok=True)
-            # main(str(test_edf), res_tsv_name, model, device)
+            # edf_path = ref_tsv
+            # edf_path = str(edf_path)[:-10]+'eeg.edf'   #  replace "events.tsv" to "eeg.edf"
+            # main(str(edf_path), res_tsv_name, model, device)
+            # # main(str(test_edf), res_tsv_name, model, device)
             #
             # ref = Annotations.loadTsv(ref_tsv)
             # hyp = Annotations.loadTsv(res_tsv_name)
@@ -161,8 +172,10 @@ if __name__ == '__main__':
     # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess_result_baseline"
 
 
-    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess"
-    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess_labram"
+    # input = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess"
+    # result = "/media/public/Datasets/epilepsybenchmarks_chellenge/tuh_train_preprocess_labram"
 
+    input = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena"
+    result = "/media/public/Datasets/epilepsybenchmarks_chellenge/BIDS_Siena_v4"
 
     process_dataset(input, result)
